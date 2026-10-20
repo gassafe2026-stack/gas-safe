@@ -4,27 +4,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-A static marketing/landing page for **GAS-SAFE**, a Georgian gas service & gas-detector installation business (24/7). There is no build step, package manager, test suite, linter, or git repo.
+A static marketing/landing page for **GAS-SAFE**, a Georgian gas service & gas-detector installation business (24/7), published in Georgian (default, site root), English (`/en/`) and Russian (`/ru/`) on https://gassafe.ge. No package manager, test suite or linter; the only tooling is a dependency-free Node build script.
 
-- `index.html` — markup only (no inline `<script>`/`<style>`, no `on*` attributes)
-- `css/styles.css` — the few custom styles that aren't Tailwind utilities (body defaults, `.modal-active`, `.glass-nav`, scrollbar)
-- `js/tailwind.config.js` — Tailwind Play CDN theme (custom `navy` / `amberAccent` colors, `Noto Sans Georgian` font); must load right after the CDN script
-- `js/main.js` — all behavior, loaded with `defer`
+```
+src/template.html      markup for every language (no inline <script>/<style>, no on* attributes)
+src/i18n/{ka,en,ru}.json  "page": texts for the template, "js": texts used by main.js
+src/css/styles.css     the few non-Tailwind styles (body defaults, .modal-active, .glass-nav, scrollbar)
+src/js/tailwind.config.js  Tailwind Play CDN theme; must load right after the CDN script
+src/js/main.js         all behavior, loaded with defer
+build.js               src/ -> dist/ (generated, git-ignored)
+```
 
-All user-facing copy is in Georgian (`lang="ka"`); keep new text in Georgian and prices in lari (`₾`).
+## Commands
 
-## Running
+- `node build.js` — regenerates `dist/`: `index.html`, `en/index.html`, `ru/index.html`, `js/i18n/<lang>.js`, copies css/js, writes `sitemap.xml` and `robots.txt`. Run after every change in `src/`; `dist/` is what gets deployed.
+- Preview: `python3 -m http.server 8000 -d dist` → http://localhost:8000/ (language links are directory URLs like `en/`, so use a server rather than `file://`).
 
-Open `index.html` directly in a browser (`open index.html`). It needs network access because all dependencies load from CDNs:
-- Tailwind CSS via the Play CDN (`cdn.tailwindcss.com`) — classes are compiled in the browser, so any Tailwind class added to the HTML works without a rebuild
-- Font Awesome 6.4.0 (cdnjs) for icons (`fa-solid ...` classes)
-- Google Fonts: Noto Sans Georgian
+Never edit `dist/` by hand. Dependencies load from CDNs, so previews need network access: Tailwind Play CDN (classes are compiled in the browser, so any Tailwind class in the template works without extra tooling), Font Awesome 6.4.0, Google Fonts (Noto Sans Georgian + Noto Sans for Latin/Cyrillic).
+
+## Internationalization & SEO
+
+- In `src/template.html`, `{{key}}` is replaced with the HTML-escaped `page.key` of the current language; `{{{key}}}` is a value computed in `build.js` (asset base path, canonical URL, hreflang/og tags, language switcher links, JSON-LD). Unknown keys, and keys present in one locale but not the others, fail the build — add every new text to all three JSON files.
+- Each page gets its own `<html lang>`, title/description, canonical URL, `hreflang` alternates (+ `x-default` → Georgian), `og:locale` + alternates, and `HomeAndConstructionBusiness` JSON-LD whose service prices are read from the `data-price` attributes on `#book-service` options. `SITE_URL` and the language list live at the top of `build.js`.
+- `main.js` gets its strings from `window.I18N` (generated `js/i18n/<lang>.js`) via `t(key, vars)`; `formatPrice()` and `formatPoints()` (uses `Intl.PluralRules`, so `points` in the locale has `one`/`few`/`many`/`other` forms) handle language-specific word order. WhatsApp messages are sent in the page's language.
+- Keep the Georgian copy as the source of truth; prices are in lari (`₾` in the UI, `GEL`/`лари` in titles).
 
 ## Structure
 
-Page sections in order: sticky nav (+ `#mobile-menu`), `#hero`, emergency banner, `#services` (service cards), `#calculator`, `#booking` (form), `#guarantee`, footer, then the `#emergency-modal` overlay and `#toast-container`.
+Page sections in order: language top bar, sticky nav (+ `#mobile-menu`), `#hero`, emergency banner, `#services` (service cards), `#calculator`, `#booking` (form), `#guarantee`, footer, then the `#emergency-modal` overlay and `#toast-container`.
 
-`js/main.js` is a plain script of global functions (no framework, no modules). All event wiring happens in its `DOMContentLoaded` handler, keyed off ids and data attributes in the HTML — `[data-open-emergency]` (opens the modal), `[data-book-service]` (service cards), `[data-points-delta]` (calculator +/−), `#calc-to-booking`, `#direct-booking-form`, `#emergency-form`, `#emergency-close`. New interactive elements need a listener there, not an inline handler.
+`src/js/main.js` is a plain script of global functions (no framework, no modules). All event wiring happens in its `DOMContentLoaded` handler, keyed off ids and data attributes in the HTML — `[data-open-emergency]` (opens the modal), `[data-book-service]` (service cards), `[data-points-delta]` (calculator +/−), `#calc-to-booking`, `#direct-booking-form`, `#emergency-form`, `#emergency-close`. New interactive elements need a listener there, not an inline handler.
 
 - **Price calculator** — `calculatePrice()`: (`data-price` of the selected `#calc-service` option + `DETECTOR_KIT_PRICE` if `isDetectorKitSelected()`) × `pointsCount` (global, clamped 1–10 by `adjustPoints`) — the kit is installed at every point. The kit checkbox (`#calc-addons`) is only shown and counted when the service is `detector`. Prices are duplicated: calculator `data-price`s, `#book-service` option `data-price`s and labels, and the hard-coded prices in the hero and on service cards.
 - **Service keys** — `detector` / `leak` / `appliance` / `piping` link the pieces: they are the `#calc-service` option values and the `data-service` attributes on `#book-service` options. `selectServiceForBooking(key)` (called from service cards) and `transferCalcToBooking()` select the booking option by that key. `transferCalcToBooking()` also stores a `calcEstimate` snapshot; it is shown under the select (`#calc-estimate-note`) and used in the WhatsApp message only while the booking form still has the same service selected (`activeCalcEstimate()`), otherwise the message uses the option's `data-price`.

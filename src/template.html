@@ -1,33 +1,58 @@
 <!DOCTYPE html>
-<html lang="ka">
+<!--
+    Template for every language version. Do not open directly: run `node build.js` and open dist/.
+    {{key}}   -> text from src/i18n/<lang>.json ("page"), HTML-escaped
+    {{{key}}} -> value computed by build.js (URLs, SEO tags), inserted as-is
+-->
+<html lang="{{{lang}}}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAS-SAFE - გაზის სერვისი & დეტექტორების მონტაჟი 24/7</title>
-    <meta name="description" content="გაზის დეტექტორისა და ელექტრო ონკანის მონტაჟი 150 ლარიდან, გაჟონვის დიაგნოსტიკა, გაზქურისა და ქვაბის მიერთება, 24/7 ავარიული გამოძახება თბილისში. ☎ 571 50 46 00">
+    <title>{{metaTitle}}</title>
+    <meta name="description" content="{{metaDescription}}">
     <meta name="theme-color" content="#0f172a">
+    <link rel="canonical" href="{{{canonicalUrl}}}">
+    <!-- Language versions for search engines -->
+{{{hreflangLinks}}}
     <!-- Link previews (WhatsApp, Facebook, Telegram) -->
     <meta property="og:type" content="website">
-    <meta property="og:locale" content="ka_GE">
+    <meta property="og:url" content="{{{canonicalUrl}}}">
+    <meta property="og:locale" content="{{{ogLocale}}}">
+{{{ogLocaleAlternates}}}
     <meta property="og:site_name" content="GAS-SAFE">
-    <meta property="og:title" content="GAS-SAFE - გაზის სერვისი & დეტექტორების მონტაჟი 24/7">
-    <meta property="og:description" content="გაზის დეტექტორის მონტაჟი 150 ლარიდან, გაჟონვის დიაგნოსტიკა და 24/7 ავარიული გამოძახება. ☎ 571 50 46 00">
+    <meta property="og:title" content="{{metaTitle}}">
+    <meta property="og:description" content="{{ogDescription}}">
+    <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23f97316'/%3E%3Cstop offset='1' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M33 9c2 9-4 13-8 19-3 5-3 11 0 15 2 3 5 5 9 5 7 0 12-5 12-12 0-5-2-8-4-11 0 4-2 6-4 7 1-8-1-16-5-23z' fill='%23fff'/%3E%3C/svg%3E">
+    <!-- Structured data: local business, services and prices -->
+    <script type="application/ld+json">{{{jsonLd}}}</script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Noto Sans Georgian -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="js/tailwind.config.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="js/main.js" defer></script>
+    <!-- Google Fonts: Noto Sans Georgian (Georgian) + Noto Sans (Latin, Cyrillic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="{{{assetBase}}}js/tailwind.config.js"></script>
+    <link rel="stylesheet" href="{{{assetBase}}}css/styles.css">
+    <script src="{{{assetBase}}}js/i18n/{{{lang}}}.js" defer></script>
+    <script src="{{{assetBase}}}js/main.js" defer></script>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between">
 
     <!-- Toast Notifications Container -->
     <div id="toast-container" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:top-5 sm:right-5 sm:w-96 z-[60] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Top bar: language switcher -->
+    <div class="bg-navy-950 text-slate-400 text-xs border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-9 flex items-center justify-between gap-3">
+            <span class="hidden sm:inline whitespace-nowrap"><i class="fa-solid fa-clock text-orange-400 mr-1.5"></i>{{topbarHours}} · {{footerArea}}</span>
+            <nav class="flex items-center gap-1 ml-auto" aria-label="{{langSwitcherLabel}}">
+                <i class="fa-solid fa-globe text-slate-500 mr-1"></i>
+{{{langLinks}}}
+            </nav>
+        </div>
+    </div>
 
     <header class="glass-nav sticky top-0 z-40 text-white shadow-xl border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,16 +64,16 @@
                     </div>
                     <div class="min-w-0">
                         <span class="block text-lg sm:text-xl font-extrabold tracking-wide whitespace-nowrap bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">GAS-SAFE</span>
-                        <span class="block text-[11px] sm:text-xs text-orange-400 font-medium whitespace-nowrap">გაზის სერვისი 24/7</span>
+                        <span class="block text-[11px] sm:text-xs text-orange-400 font-medium whitespace-nowrap">{{brandTagline}}</span>
                     </div>
                 </a>
 
                 <!-- Navigation Links -->
-                <nav class="hidden lg:flex items-center gap-6 xl:gap-5 2xl:gap-8 text-sm font-medium whitespace-nowrap">
-                    <a href="#services" class="hover:text-orange-400 transition-colors py-2">სერვისები & ფასები</a>
-                    <a href="#calculator" class="hover:text-orange-400 transition-colors py-2">კალკულატორი</a>
-                    <a href="#booking" class="hover:text-orange-400 transition-colors py-2">ონლაინ შეკვეთა</a>
-                    <a href="#guarantee" class="hover:text-orange-400 transition-colors py-2">უსაფრთხოება</a>
+                <nav class="hidden lg:flex items-center gap-5 2xl:gap-8 text-sm font-medium whitespace-nowrap">
+                    <a href="#services" class="hover:text-orange-400 transition-colors py-2">{{navServices}}</a>
+                    <a href="#calculator" class="hover:text-orange-400 transition-colors py-2">{{navCalculator}}</a>
+                    <a href="#booking" class="hover:text-orange-400 transition-colors py-2">{{navBooking}}</a>
+                    <a href="#guarantee" class="hover:text-orange-400 transition-colors py-2">{{navSafety}}</a>
                 </nav>
 
                 <!-- Hotline & Emergency CTA (wide screens) -->
@@ -56,19 +81,19 @@
                     <a href="tel:+995571504600" class="flex items-center gap-3 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl border border-slate-700 transition whitespace-nowrap">
                         <i class="fa-solid fa-phone-volume text-orange-400 animate-pulse"></i>
                         <div class="text-left leading-tight">
-                            <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold">ცხელი ხაზი</span>
+                            <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold">{{hotline}}</span>
                             <span class="block text-sm font-bold text-orange-400">571 50 46 00</span>
                         </div>
                     </a>
                     <!-- Quick Messaging Links -->
-                    <a href="https://wa.me/995571504600" target="_blank" class="w-10 h-10 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-md transition flex items-center justify-center text-lg" title="WhatsApp">
+                    <a href="https://wa.me/995571504600" target="_blank" rel="noopener" class="w-10 h-10 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-md transition flex items-center justify-center text-lg" title="WhatsApp">
                         <i class="fa-brands fa-whatsapp"></i>
                     </a>
                     <a href="viber://chat?number=%2B995571504600" class="w-10 h-10 bg-purple-600 hover:bg-purple-500 text-white rounded-xl shadow-md transition flex items-center justify-center text-lg" title="Viber">
                         <i class="fa-brands fa-viber"></i>
                     </a>
                     <button data-open-emergency class="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow-md shadow-red-900/40 hover:shadow-lg transition flex items-center gap-2 whitespace-nowrap">
-                        <i class="fa-solid fa-bolt"></i> 24/7 გამოძახება
+                        <i class="fa-solid fa-bolt"></i> {{ctaCall24}}
                     </button>
                 </div>
 
@@ -77,19 +102,19 @@
                     <a href="tel:+995571504600" class="hidden sm:flex lg:hidden items-center gap-2 bg-slate-800 border border-slate-700 text-orange-400 font-bold text-sm px-3 h-9 rounded-lg whitespace-nowrap">
                         <i class="fa-solid fa-phone-volume"></i> 571 50 46 00
                     </a>
-                    <a href="tel:+995571504600" class="flex sm:hidden lg:flex w-9 h-9 items-center justify-center bg-slate-800 border border-slate-700 text-orange-400 rounded-lg" title="571 50 46 00" aria-label="დარეკვა">
+                    <a href="tel:+995571504600" class="flex sm:hidden lg:flex w-9 h-9 items-center justify-center bg-slate-800 border border-slate-700 text-orange-400 rounded-lg" title="571 50 46 00" aria-label="{{ariaCall}}">
                         <i class="fa-solid fa-phone-volume"></i>
                     </a>
-                    <a href="https://wa.me/995571504600" target="_blank" class="hidden sm:flex w-9 h-9 items-center justify-center bg-emerald-600 text-white rounded-lg" title="WhatsApp">
+                    <a href="https://wa.me/995571504600" target="_blank" rel="noopener" class="hidden sm:flex w-9 h-9 items-center justify-center bg-emerald-600 text-white rounded-lg" title="WhatsApp">
                         <i class="fa-brands fa-whatsapp"></i>
                     </a>
                     <a href="viber://chat?number=%2B995571504600" class="hidden sm:flex w-9 h-9 items-center justify-center bg-purple-600 text-white rounded-lg" title="Viber">
                         <i class="fa-brands fa-viber"></i>
                     </a>
-                    <button data-open-emergency class="bg-red-600 text-white h-9 px-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-md whitespace-nowrap" aria-label="24/7 გამოძახება">
+                    <button data-open-emergency class="bg-red-600 text-white h-9 px-2.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-md whitespace-nowrap" aria-label="{{ctaCall24}}">
                         <i class="fa-solid fa-bolt"></i><span class="hidden min-[360px]:inline">24/7</span>
                     </button>
-                    <button id="mobile-menu-btn" type="button" class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-300 hover:text-white" aria-label="მენიუ">
+                    <button id="mobile-menu-btn" type="button" class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-300 hover:text-white" aria-label="{{ariaMenu}}">
                         <i class="fa-solid fa-bars text-lg"></i>
                     </button>
                 </div>
@@ -98,16 +123,16 @@
 
         <!-- Mobile Nav Menu -->
         <div id="mobile-menu" class="hidden lg:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
-            <a href="#services" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">სერვისები & ფასები</a>
-            <a href="#calculator" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">კალკულატორი</a>
-            <a href="#booking" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">ონლაინ შეკვეთა</a>
-            <a href="#guarantee" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">უსაფრთხოების გარანტია</a>
+            <a href="#services" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">{{navServices}}</a>
+            <a href="#calculator" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">{{navCalculator}}</a>
+            <a href="#booking" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">{{navBooking}}</a>
+            <a href="#guarantee" class="block py-2 text-slate-200 hover:text-orange-400 font-medium">{{navSafetyMobile}}</a>
             <div class="pt-3 border-t border-slate-800 space-y-2">
                 <a href="tel:+995571504600" class="flex items-center gap-3 text-orange-400 font-bold text-base">
                     <i class="fa-solid fa-phone-volume"></i> 571 50 46 00
                 </a>
                 <div class="flex items-center gap-3 pt-1">
-                    <a href="https://wa.me/995571504600" target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-lg text-center flex items-center justify-center gap-2">
+                    <a href="https://wa.me/995571504600" target="_blank" rel="noopener" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-2 rounded-lg text-center flex items-center justify-center gap-2">
                         <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
                     </a>
                     <a href="viber://chat?number=%2B995571504600" class="flex-1 bg-purple-600 text-white text-xs font-bold py-2 rounded-lg text-center flex items-center justify-center gap-2">
@@ -125,41 +150,41 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-                
+
                 <div class="lg:col-span-7 text-center lg:text-left">
                     <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20 mb-4">
-                        <i class="fa-solid fa-shield-halved"></i> ოფიციალური სერვისი & გარანტია
+                        <i class="fa-solid fa-shield-halved"></i> {{heroBadge}}
                     </span>
                     <h1 class="text-[1.7rem] sm:text-5xl xl:text-6xl font-extrabold tracking-tight leading-tight mb-6">
-                        გაზის დეტექტორის მონტაჟი <br class="hidden sm:inline">
-                        <span class="bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400 bg-clip-text text-transparent">150 ლარიდან</span>
+                        {{heroTitle}} <br class="hidden sm:inline">
+                        <span class="bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400 bg-clip-text text-transparent">{{heroTitlePrice}}</span>
                     </h1>
                     <p class="text-base sm:text-lg text-slate-300 font-normal leading-relaxed mb-8">
-                        გაზის დეტექტორისა და ავტომატური ელექტრული ონკანის პროფესიონალური ინსტალაცია, გაჟონვის დიაგნოსტიკა, ხელსაწყოების მიერთება და 24/7 ავარიული მომსახურება.
+                        {{heroText}}
                     </p>
 
                     <div class="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
                         <a href="#booking" class="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold px-6 xl:px-8 py-4 rounded-xl shadow-lg shadow-orange-500/25 transition duration-200 text-center whitespace-nowrap">
-                            <i class="fa-solid fa-calendar-check mr-2"></i> სერვისის შეკვეთა
+                            <i class="fa-solid fa-calendar-check mr-2"></i> {{heroCtaOrder}}
                         </a>
                         <button data-open-emergency class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold px-6 xl:px-8 py-4 rounded-xl transition text-center flex items-center justify-center gap-2 whitespace-nowrap">
-                            <i class="fa-solid fa-bolt text-red-500"></i> ავარიული გამოძახება 24/7
+                            <i class="fa-solid fa-bolt text-red-500"></i> {{heroCtaEmergency}}
                         </button>
                     </div>
 
                     <!-- Highlights Badge Bar -->
                     <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3 text-left">
                         <div class="bg-slate-800/50 border border-slate-800 p-3 rounded-xl">
-                            <div class="text-orange-400 font-bold text-sm mb-0.5"><i class="fa-solid fa-clock mr-1"></i> 30-40 წუთი</div>
-                            <div class="text-slate-400 text-xs">ოპერატიული მოსვლა</div>
+                            <div class="text-orange-400 font-bold text-sm mb-0.5"><i class="fa-solid fa-clock mr-1"></i> {{hl1Title}}</div>
+                            <div class="text-slate-400 text-xs">{{hl1Text}}</div>
                         </div>
                         <div class="bg-slate-800/50 border border-slate-800 p-3 rounded-xl">
-                            <div class="text-orange-400 font-bold text-sm mb-0.5"><i class="fa-solid fa-certificate mr-1"></i> 100% სტანდარტი</div>
-                            <div class="text-slate-400 text-xs">ტექ. ნორმების დაცვა</div>
+                            <div class="text-orange-400 font-bold text-sm mb-0.5"><i class="fa-solid fa-certificate mr-1"></i> {{hl2Title}}</div>
+                            <div class="text-slate-400 text-xs">{{hl2Text}}</div>
                         </div>
                         <div class="col-span-2 sm:col-span-1 lg:col-span-2 xl:col-span-1 bg-slate-800/50 border border-slate-800 p-3 rounded-xl">
-                            <div class="text-orange-400 font-bold text-sm mb-0.5"><i class="fa-solid fa-file-shield mr-1"></i>კვალიფიციური</div>
-                            <div class="text-slate-400 text-xs">სპეციალისტები</div>
+                            <div class="text-orange-400 font-bold text-sm mb-0.5"><i class="fa-solid fa-file-shield mr-1"></i>{{hl3Title}}</div>
+                            <div class="text-slate-400 text-xs">{{hl3Text}}</div>
                         </div>
                     </div>
                 </div>
@@ -168,41 +193,41 @@
                 <div class="lg:col-span-5 w-full max-w-xl mx-auto lg:max-w-none">
                     <div class="bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700 p-6 sm:p-8 rounded-3xl shadow-2xl relative">
                         <div class="absolute -top-3 right-4 sm:-right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">
-                            24/7 აქტიური
+                            {{kitBadge}}
                         </div>
-                        
+
                         <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-700/80">
                             <div class="w-16 h-16 bg-orange-500/20 text-orange-400 rounded-2xl flex items-center justify-center text-3xl border border-orange-500/30">
                                 <i class="fa-solid fa-shield-cat"></i>
                             </div>
                             <div>
-                                <h3 class="text-lg font-extrabold text-white">უსაფრთხოების კომპლექტი</h3>
-                                <p class="text-xs text-slate-400">დეტექტორი + ელექტრო ონკანი</p>
+                                <h3 class="text-lg font-extrabold text-white">{{kitTitle}}</h3>
+                                <p class="text-xs text-slate-400">{{kitSubtitle}}</p>
                             </div>
                         </div>
 
                         <ul class="space-y-3.5 text-xs text-slate-300 mb-6">
                             <li class="flex items-start gap-2.5">
                                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm mt-0.5"></i>
-                                <span><strong>ავტომატური ჩაკეტვა:</strong> გაჟონვისას ელექტრო სარქველი წამიერად თიშავს გაზს.</span>
+                                <span><strong>{{kitItem1Title}}</strong> {{kitItem1Text}}</span>
                             </li>
                             <li class="flex items-start gap-2.5">
                                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm mt-0.5"></i>
-                                <span><strong>ხმოვანი განგაში:</strong> მაღალი სიხშირის ხმოვანი სიგნალი.</span>
+                                <span><strong>{{kitItem2Title}}</strong> {{kitItem2Text}}</span>
                             </li>
                             <li class="flex items-start gap-2.5">
                                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm mt-0.5"></i>
-                                <span><strong>სრული მონტაჟი:</strong> მოიცავს მოწყობილობას, კაბელირებას და ტესტირებას.</span>
+                                <span><strong>{{kitItem3Title}}</strong> {{kitItem3Text}}</span>
                             </li>
                         </ul>
 
                         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between">
                             <div>
-                                <span class="text-[10px] text-slate-400 uppercase font-bold block">სრული სერვისი</span>
-                                <span class="text-2xl font-black text-orange-400 whitespace-nowrap">150 ₾ - დან</span>
+                                <span class="text-[10px] text-slate-400 uppercase font-bold block">{{kitPriceLabel}}</span>
+                                <span class="text-2xl font-black text-orange-400 whitespace-nowrap">{{kitPrice}}</span>
                             </div>
                             <a href="#booking" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-lg text-xs transition whitespace-nowrap">
-                                დაჯავშნა
+                                {{kitBook}}
                             </a>
                         </div>
                     </div>
@@ -220,19 +245,19 @@
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                     <div>
-                        <h3 class="text-base sm:text-lg font-bold">გაზის სუნი იგრძენით ან ავარიული სიტუაციაა?</h3>
-                        <p class="text-xs sm:text-sm text-red-100">ავარიული ბრიგადა მზად არის დაუყოვნებლივი გამოსაძახებლად</p>
+                        <h3 class="text-base sm:text-lg font-bold">{{alertTitle}}</h3>
+                        <p class="text-xs sm:text-sm text-red-100">{{alertText}}</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 flex-wrap justify-center">
                     <a href="tel:+995571504600" class="bg-white text-red-600 hover:bg-slate-100 px-5 py-2.5 rounded-xl font-extrabold text-sm shadow-md transition flex items-center gap-2 whitespace-nowrap">
                         <i class="fa-solid fa-phone"></i> 571 50 46 00
                     </a>
-                    <a href="https://wa.me/995571504600" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-md transition flex items-center gap-2">
+                    <a href="https://wa.me/995571504600" target="_blank" rel="noopener" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-md transition flex items-center gap-2">
                         <i class="fa-brands fa-whatsapp"></i> WhatsApp
                     </a>
                     <button data-open-emergency class="bg-navy-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md transition whitespace-nowrap">
-                        სასწრაფო გამოძახება
+                        {{emergencyCall}}
                     </button>
                 </div>
             </div>
@@ -242,9 +267,9 @@
     <section id="services" class="py-16 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-12">
-                <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">ჩვენი მომსახურება</span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 mb-3">კომპანიის ძირითადი გაზის სერვისები</h2>
-                <p class="text-slate-600 text-sm sm:text-base">მაღალი ხარისხის სამუშაოები უსაფრთხოების ნორმების სრული დაცვით</p>
+                <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">{{servicesEyebrow}}</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 mb-3">{{servicesTitle}}</h2>
+                <p class="text-slate-600 text-sm sm:text-base">{{servicesText}}</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -254,16 +279,16 @@
                         <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 text-xl font-bold mb-4">
                             <i class="fa-solid fa-bell"></i>
                         </div>
-                        <div class="inline-block px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-md mb-2">ყველაზე მოთხოვნადი</div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">დეტექტორი + ელ. ონკანი</h3>
+                        <div class="inline-block px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-md mb-2">{{s1Badge}}</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">{{s1Title}}</h3>
                         <p class="text-slate-600 text-xs leading-relaxed mb-4">
-                            გაზის გაჟონვის დეტექტორისა და ავტომატური სოლენოიდური სარქველის (ონკანის) მონტაჟი და ტესტირება.
+                            {{s1Text}}
                         </p>
                     </div>
                     <div>
-                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">150 ₾ -დან</div>
+                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">{{s1Price}}</div>
                         <a href="#booking" data-book-service="detector" class="block text-center bg-slate-900 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                            შეკვეთა
+                            {{orderBtn}}
                         </a>
                     </div>
                 </div>
@@ -274,16 +299,16 @@
                         <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600 text-xl font-bold mb-4">
                             <i class="fa-solid fa-bolt"></i>
                         </div>
-                        <div class="inline-block px-2.5 py-1 bg-red-100 text-red-800 text-[11px] font-bold rounded-md mb-2">24/7 ოპერატიული</div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">ავარიული გამოძახება</h3>
+                        <div class="inline-block px-2.5 py-1 bg-red-100 text-red-800 text-[11px] font-bold rounded-md mb-2">{{s2Badge}}</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">{{s2Title}}</h3>
                         <p class="text-slate-600 text-xs leading-relaxed mb-4">
-                            გაჟონვის შემოწმება, ავარიული ჩაკეტვა და დაზიანებული მონაკვეთების ოპერატიული აღმოფხვრა.
+                            {{s2Text}}
                         </p>
                     </div>
                     <div>
-                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">50 ₾ -დან</div>
+                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">{{s2Price}}</div>
                         <button data-open-emergency class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                            სასწრაფო გამოძახება
+                            {{emergencyCall}}
                         </button>
                     </div>
                 </div>
@@ -294,16 +319,16 @@
                         <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 text-xl font-bold mb-4">
                             <i class="fa-solid fa-fire"></i>
                         </div>
-                        <div class="inline-block px-2.5 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-md mb-2">ინსტალაცია</div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">ხელსაწყოების მიერთება</h3>
+                        <div class="inline-block px-2.5 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-md mb-2">{{s3Badge}}</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">{{s3Title}}</h3>
                         <p class="text-slate-600 text-xs leading-relaxed mb-4">
-                            გაზქურის, წყლის გამაცხელებლის (კალონკის) და ცენტრალური გათბობის ქვაბის უსაფრთხო შეერთება.
+                            {{s3Text}}
                         </p>
                     </div>
                     <div>
-                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">60 ₾ -დან</div>
+                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">{{s3Price}}</div>
                         <a href="#booking" data-book-service="appliance" class="block text-center bg-slate-900 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                            შეკვეთა
+                            {{orderBtn}}
                         </a>
                     </div>
                 </div>
@@ -314,16 +339,16 @@
                         <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 text-xl font-bold mb-4">
                             <i class="fa-solid fa-diagram-project"></i>
                         </div>
-                        <div class="inline-block px-2.5 py-1 bg-blue-100 text-blue-800 text-[11px] font-bold rounded-md mb-2">პროექტირება</div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">ქსელის გაყვანა/გადაკეთება</h3>
+                        <div class="inline-block px-2.5 py-1 bg-blue-100 text-blue-800 text-[11px] font-bold rounded-md mb-2">{{s4Badge}}</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">{{s4Title}}</h3>
                         <p class="text-slate-600 text-xs leading-relaxed mb-4">
-                            შიდა გაზის მილების მონტაჟი, გადაკეთება, პროექტირება და ტექნიკური სტანდარტების სერტიფიცირება.
+                            {{s4Text}}
                         </p>
                     </div>
                     <div>
-                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">120 ₾ -დან</div>
+                        <div class="text-xl font-extrabold text-slate-900 mb-4 whitespace-nowrap">{{s4Price}}</div>
                         <a href="#booking" data-book-service="piping" class="block text-center bg-slate-900 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                            შეკვეთა
+                            {{orderBtn}}
                         </a>
                     </div>
                 </div>
@@ -334,9 +359,9 @@
     <section id="calculator" class="py-16 bg-navy-900 text-white relative overflow-hidden">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-2xl mx-auto mb-10">
-                <span class="text-xs font-bold uppercase tracking-widest text-orange-400">ონლაინ კალკულატორი</span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold mt-1 mb-3">გამოითვალეთ სერვისის სავარაუდო ღირებულება</h2>
-                <p class="text-slate-400 text-xs sm:text-sm">მონიშნეთ სასურველი პარამეტრები და მიიღეთ ზუსტი ფასი</p>
+                <span class="text-xs font-bold uppercase tracking-widest text-orange-400">{{calcEyebrow}}</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold mt-1 mb-3">{{calcTitle}}</h2>
+                <p class="text-slate-400 text-xs sm:text-sm">{{calcText}}</p>
             </div>
 
             <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 sm:p-8 backdrop-blur-md shadow-2xl">
@@ -344,27 +369,27 @@
                     <!-- Calculator Options -->
                     <div class="space-y-5">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">ძირითადი სერვისი</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">{{calcServiceLabel}}</label>
                             <select id="calc-service" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                                <option value="detector" data-price="80">გაზის დეტექტორის მონტაჟი (მხოლოდ სამუშაო)</option>
-                                <option value="leak" data-price="50">გაჟონვის დიაგნოსტიკა</option>
-                                <option value="appliance" data-price="60">მოწყობილობის შეერთება</option>
-                                <option value="piping" data-price="120">მილების გაყვანა/გადაკეთება</option>
+                                <option value="detector" data-price="80">{{calcOptDetector}}</option>
+                                <option value="leak" data-price="50">{{calcOptLeak}}</option>
+                                <option value="appliance" data-price="60">{{calcOptAppliance}}</option>
+                                <option value="piping" data-price="120">{{calcOptPiping}}</option>
                             </select>
                         </div>
 
                         <div id="calc-addons">
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">დამატებითი მოწყობილობები</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">{{calcAddonsLabel}}</label>
                             <div class="space-y-2">
                                 <label class="flex items-center gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-slate-600 transition">
                                     <input type="checkbox" id="calc-detector-kit" checked class="w-4 h-4 text-orange-500 rounded border-slate-700 focus:ring-orange-500 bg-slate-800 shrink-0">
-                                    <span class="text-xs text-slate-200 font-medium">გაზის დეტექტორი + ელექტრო ონკანი (+70₾)</span>
+                                    <span class="text-xs text-slate-200 font-medium">{{calcKitLabel}}</span>
                                 </label>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">წერტილების / ხელსაწყოების რაოდენობა</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-2">{{calcPointsLabel}}</label>
                             <div class="flex items-center gap-3">
                                 <button type="button" data-points-delta="-1" class="w-10 h-10 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-600 transition">-</button>
                                 <span id="calc-points-count" class="text-lg font-bold text-orange-400 w-8 text-center">1</span>
@@ -376,17 +401,17 @@
                     <!-- Calculator Total Box -->
                     <div class="bg-slate-950 rounded-xl p-5 sm:p-6 border border-slate-800 flex flex-col justify-between gap-4 text-center md:text-left">
                         <div>
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1">სავარაუდო ჯამური ღირებულება</span>
+                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1">{{calcTotalLabel}}</span>
                             <div class="text-4xl sm:text-5xl font-black text-orange-400 mb-2 whitespace-nowrap">
-                                <span id="calc-total-price">150</span> <span class="text-2xl font-normal text-slate-300">₾ - დან</span>
+                                <span class="text-2xl font-normal text-slate-300">{{calcTotalPrefix}}</span><span id="calc-total-price">150</span> <span class="text-2xl font-normal text-slate-300">{{calcTotalSuffix}}</span>
                             </div>
                             <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                                * ფასი მოიცავს ადგილზე მოსვლას, დიაგნოსტიკასა და შესრულებულ სამუშაოს გარანტიით.
+                                {{calcNote}}
                             </p>
                         </div>
 
                         <a href="#booking" id="calc-to-booking" class="w-full text-center bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition">
-                            ამ ფასით შეკვეთა
+                            {{calcCta}}
                         </a>
                     </div>
                 </div>
@@ -398,60 +423,60 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-slate-50 border border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-10 shadow-lg">
                 <div class="text-center max-w-xl mx-auto mb-8">
-                    <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">სწრაფი ჯავშანი</span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">შეუკვეთეთ სერვისი</h2>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">შეავსეთ განაცხადი, გაგზავნეთ WhatsApp-ით და ოპერატორი მალე დაგიკავშირდებათ</p>
+                    <span class="text-xs font-bold uppercase text-orange-600 tracking-wider">{{bookEyebrow}}</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">{{bookTitle}}</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">{{bookText}}</p>
                 </div>
 
                 <form id="direct-booking-form" class="space-y-5">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">სახელი და გვარი *</label>
-                            <input type="text" id="book-name" required placeholder="მაგ: გიორგი ბერიძე" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">{{nameLabel}}</label>
+                            <input type="text" id="book-name" required placeholder="{{namePlaceholder}}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">ტელეფონის ნომერი *</label>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">{{phoneLabel}}</label>
                             <input type="tel" id="book-phone" required data-phone placeholder="5XX XX XX XX" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">სასურველი სერვისი</label>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">{{serviceLabel}}</label>
                             <select id="book-service" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
-                                <option value="დეტექტორი + ელ. ონკანის მონტაჟი" data-service="detector" data-price="150">გაზის დეტექტორი + ელ. ონკანი (150₾ - დან)</option>
-                                <option value="გაჟონვის შემოწმება / დიაგნოსტიკა" data-service="leak" data-price="50">გაჟონვის შემოწმება / დიაგნოსტიკა (50₾ - დან)</option>
-                                <option value="გაზქურის / ქვაბის მიერთება" data-service="appliance" data-price="60">გაზქურის / ქვაბის მიერთება (60₾ - დან)</option>
-                                <option value="მილების გაყვანა / გადაკეთება" data-service="piping" data-price="120">მილების გაყვანა / გადაკეთება (120₾ - დან)</option>
+                                <option value="{{bookOptDetectorValue}}" data-service="detector" data-price="150">{{bookOptDetectorLabel}}</option>
+                                <option value="{{bookOptLeakValue}}" data-service="leak" data-price="50">{{bookOptLeakLabel}}</option>
+                                <option value="{{bookOptApplianceValue}}" data-service="appliance" data-price="60">{{bookOptApplianceLabel}}</option>
+                                <option value="{{bookOptPipingValue}}" data-service="piping" data-price="120">{{bookOptPipingLabel}}</option>
                             </select>
                             <p id="calc-estimate-note" class="hidden mt-1.5 text-xs font-semibold text-orange-600"></p>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">ქალაქი / რაიონი</label>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">{{cityLabel}}</label>
                             <select id="book-city" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
-                                <option value="თბილისი">თბილისი (ყველა უბანი)</option>
-                                <option value="რუსთავი">რუსთავი</option>
-                                <option value="ბათუმი">ბათუმი</option>
-                                <option value="ქუთაისი">ქუთაისი</option>
-                                <option value="მცხეთა">მცხეთა</option>
+                                <option value="{{cityTbilisi}}">{{cityTbilisiLabel}}</option>
+                                <option value="{{cityRustavi}}">{{cityRustavi}}</option>
+                                <option value="{{cityBatumi}}">{{cityBatumi}}</option>
+                                <option value="{{cityKutaisi}}">{{cityKutaisi}}</option>
+                                <option value="{{cityMtskheta}}">{{cityMtskheta}}</option>
                             </select>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">ზუსტი მისამართი *</label>
-                        <input type="text" id="book-address" required placeholder="მაგ: ვაჟა-ფშაველას გამზ. 25, ბინა 12" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">{{addressLabel}}</label>
+                        <input type="text" id="book-address" required placeholder="{{addressPlaceholder}}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">დამატებითი შენიშვნა</label>
-                        <textarea id="book-notes" rows="3" placeholder="დაწერეთ დამატებითი დეტალები..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5">{{notesLabel}}</label>
+                        <textarea id="book-notes" rows="3" placeholder="{{notesPlaceholder}}" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                     </div>
 
                     <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold py-4 rounded-xl shadow-lg shadow-orange-500/20 transition duration-200 text-base">
-                        <i class="fa-brands fa-whatsapp mr-2"></i> შეკვეთის დადასტურება
+                        <i class="fa-brands fa-whatsapp mr-2"></i> {{bookSubmit}}
                     </button>
-                    <p class="text-center text-xs text-slate-500">დადასტურების შემდეგ გადახვალთ WhatsApp-ში შეკვეთის დეტალებით</p>
+                    <p class="text-center text-xs text-slate-500">{{bookHint}}</p>
                 </form>
             </div>
         </div>
@@ -461,12 +486,12 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
-                    <span class="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold mb-3">უსაფრთხოების გარანტია</span>
+                    <span class="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold mb-3">{{guarBadge}}</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 leading-tight">
-                        რატომ არის აუცილებელი გაზის დეტექტორი?
+                        {{guarTitle}}
                     </h2>
                     <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                        ბუნებრივი აირი და CO (ნახშირჟანგი) უხილავი საფრთხეა. უბრალო გაჟონვამ შეიძლება გამოიწვიოს მძიმე შედეგები. ავტომატური დეტექტორისა და სარქველის (სოლენოიდის) წყვილი უზრუნველყოფს 100%-იან დაცვას.
+                        {{guarText}}
                     </p>
 
                     <div class="space-y-4">
@@ -475,8 +500,8 @@
                                 <i class="fa-solid fa-bolt text-sm"></i>
                             </div>
                             <div>
-                                <h4 class="text-sm font-bold text-slate-900">მომენტალური ავტომატური ჩაკეტვა</h4>
-                                <p class="text-xs text-slate-500">გაზის მცირედი გაჟონვისთანავე ელექტრო ონკანი წამიერად ეთიშება გაზის მიწოდებას, მაშინაც კი, თუ სახლში არავინაა.</p>
+                                <h4 class="text-sm font-bold text-slate-900">{{g1Title}}</h4>
+                                <p class="text-xs text-slate-500">{{g1Text}}</p>
                             </div>
                         </div>
 
@@ -485,8 +510,8 @@
                                 <i class="fa-solid fa-volume-high text-sm"></i>
                             </div>
                             <div>
-                                <h4 class="text-sm font-bold text-slate-900">ხმოვანი განგაში</h4>
-                                <p class="text-xs text-slate-500">დეტექტორი გამოსცემს მაღალი სიხშირის ხმოვან სიგნალს, რაც ოჯახის წევრებს ძილის დროსაც კი აღვიძებს.</p>
+                                <h4 class="text-sm font-bold text-slate-900">{{g2Title}}</h4>
+                                <p class="text-xs text-slate-500">{{g2Text}}</p>
                             </div>
                         </div>
 
@@ -495,8 +520,8 @@
                                 <i class="fa-solid fa-file-shield text-sm"></i>
                             </div>
                             <div>
-                                <h4 class="text-sm font-bold text-slate-900">სტანდარტის შესაბამისობა</h4>
-                                <p class="text-xs text-slate-500">ჩვენი მონტაჟი სრულად შეესაბამება გაზის კომპანიების მოთხოვნებსა და უსაფრთხოების რეგულაციებს.</p>
+                                <h4 class="text-sm font-bold text-slate-900">{{g3Title}}</h4>
+                                <p class="text-xs text-slate-500">{{g3Text}}</p>
                             </div>
                         </div>
                     </div>
@@ -508,15 +533,15 @@
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-extrabold">კომპანიის გარანტია</h3>
+                            <h3 class="text-xl font-extrabold">{{guarCardTitle}}</h3>
                         </div>
                     </div>
                     <p class="text-slate-300 text-xs leading-relaxed mb-6">
-                        ყოველი მონტაჟის შემდეგ ჩვენი ჯგუფი ატარებს წნევის ჰერმეტულობის ტესტს.
+                        {{guarCardText}}
                     </p>
                     <div class="pt-4 border-t border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-400">
-                        <span><i class="fa-solid fa-check text-emerald-400 mr-1"></i> სერტიფიცირებული მასალები</span>
-                        <span><i class="fa-solid fa-check text-emerald-400 mr-1"></i> ჰერმეტულობის ტესტირება</span>
+                        <span><i class="fa-solid fa-check text-emerald-400 mr-1"></i> {{guarCheck1}}</span>
+                        <span><i class="fa-solid fa-check text-emerald-400 mr-1"></i> {{guarCheck2}}</span>
                     </div>
                 </div>
             </div>
@@ -534,36 +559,36 @@
                         <span class="text-lg font-bold text-white">GAS-SAFE</span>
                     </div>
                     <p class="text-xs leading-relaxed">
-                        ოფიციალური სერვისი, დეტექტორების ინსტალაცია და 24/7 ავარიული მომსახურება.
+                        {{footerAbout}}
                     </p>
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">სერვისები</h4>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">{{footerServicesTitle}}</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="#services" class="hover:text-orange-400 transition">დეტექტორების მონტაჟი</a></li>
-                        <li><a href="#services" class="hover:text-orange-400 transition">გაჟონვის შემოწმება</a></li>
-                        <li><a href="#services" class="hover:text-orange-400 transition">გაზქურის და ქვაბის მიერთება</a></li>
-                        <li><a href="#services" class="hover:text-orange-400 transition">შიდა ქსელის გაყვანა</a></li>
+                        <li><a href="#services" class="hover:text-orange-400 transition">{{fs1}}</a></li>
+                        <li><a href="#services" class="hover:text-orange-400 transition">{{fs2}}</a></li>
+                        <li><a href="#services" class="hover:text-orange-400 transition">{{fs3}}</a></li>
+                        <li><a href="#services" class="hover:text-orange-400 transition">{{fs4}}</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">გაზის გაჟონვისას:</h4>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">{{footerLeakTitle}}</h4>
                     <ul class="space-y-1.5 text-xs text-red-300">
-                        <li>1. დაკეტეთ მთავარი ვენტილი.</li>
-                        <li>2. გააღეთ კარ-ფანჯარა.</li>
-                        <li>3. ნუ ჩართავთ ელექტროენერგიას.</li>
-                        <li>4. დარეკეთ 24/7 ცხელ ხაზზე.</li>
+                        <li>1. {{leak1}}</li>
+                        <li>2. {{leak2}}</li>
+                        <li>3. {{leak3}}</li>
+                        <li>4. {{leak4}}</li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">კონტაქტი</h4>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">{{footerContactTitle}}</h4>
                     <div class="space-y-2 text-xs">
                         <p class="text-white font-bold"><a href="tel:+995571504600" class="hover:text-orange-400 whitespace-nowrap"><i class="fa-solid fa-phone text-orange-400 mr-2"></i> 571 50 46 00</a></p>
                         <div class="flex items-center gap-2 pt-1">
-                            <a href="https://wa.me/995571504600" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                            <a href="https://wa.me/995571504600" target="_blank" rel="noopener" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
                                 <i class="fa-brands fa-whatsapp"></i> WhatsApp
                             </a>
                             <a href="viber://chat?number=%2B995571504600" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
@@ -571,14 +596,14 @@
                             </a>
                         </div>
                         <p class="pt-1 break-all"><a href="mailto:info@gassafe.ge" class="hover:text-orange-400"><i class="fa-solid fa-envelope text-orange-400 mr-2"></i> info@gassafe.ge</a></p>
-                        <p><i class="fa-solid fa-location-dot text-orange-400 mr-2"></i> თბილისი & მიმდებარე ტერიტორია</p>
-                        <p class="text-emerald-400 font-medium"><i class="fa-solid fa-clock mr-2"></i> სამუშაო საათები: 24/7</p>
+                        <p><i class="fa-solid fa-location-dot text-orange-400 mr-2"></i> {{footerArea}}</p>
+                        <p class="text-emerald-400 font-medium"><i class="fa-solid fa-clock mr-2"></i> {{footerWorkHours}}</p>
                     </div>
                 </div>
             </div>
 
             <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
-                &copy; 2026 GAS-SAFE GEORGIA. ყველა უფლება დაცულია.
+                &copy; 2026 GAS-SAFE GEORGIA. {{footerCopyright}}
             </div>
         </div>
     </footer>
@@ -586,7 +611,7 @@
     <!-- Emergency Modal -->
     <div id="emergency-modal" class="fixed inset-0 z-50 hidden bg-slate-900/85 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-2xl relative border-2 border-red-500">
-            <button type="button" id="emergency-close" aria-label="დახურვა" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">
+            <button type="button" id="emergency-close" aria-label="{{ariaClose}}" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
@@ -594,28 +619,28 @@
                 <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-3 animate-pulse">
                     <i class="fa-solid fa-truck-medical"></i>
                 </div>
-                <h3 class="text-xl font-black text-slate-900">24/7 სასწრაფო გამოძახება</h3>
-                <p class="text-xs text-red-600 font-semibold mt-1">ავარიული ჯგუფი ადგილზე მოვა 30-40 წუთში</p>
+                <h3 class="text-xl font-black text-slate-900">{{modalTitle}}</h3>
+                <p class="text-xs text-red-600 font-semibold mt-1">{{modalSubtitle}}</p>
             </div>
 
             <form id="emergency-form" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">ტელეფონის ნომერი *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">{{phoneLabel}}</label>
                     <input type="tel" id="emergency-phone" required data-phone placeholder="5XX XX XX XX" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">მისამართი / უბანი *</label>
-                    <input type="text" id="emergency-address" required placeholder="მაგ: საბურთალო, პეკინის 15" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">{{emAddressLabel}}</label>
+                    <input type="text" id="emergency-address" required placeholder="{{emAddressPlaceholder}}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none">
                 </div>
 
                 <div class="bg-red-50 p-3 rounded-xl border border-red-100 text-xs text-red-800 space-y-1">
-                    <p class="font-bold"><i class="fa-solid fa-triangle-exclamation"></i> უსაფრთხოების წესი:</p>
-                    <p>დაკეტეთ გაზის მთავარი ონკანი და გააღეთ კარ-ფანჯარა!</p>
+                    <p class="font-bold"><i class="fa-solid fa-triangle-exclamation"></i> {{emRuleTitle}}</p>
+                    <p>{{emRuleText}}</p>
                 </div>
 
                 <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3.5 rounded-xl shadow-lg transition">
-                    გამოიძახეთ ჯგუფი ახლავე
+                    {{emSubmit}}
                 </button>
             </form>
         </div>

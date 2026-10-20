@@ -3,7 +3,7 @@ html {
     scroll-padding-top: 5rem;
 }
 body {
-    font-family: 'Noto Sans Georgian', sans-serif;
+    font-family: 'Noto Sans Georgian', 'Noto Sans', sans-serif;
     background-color: #f8fafc;
     color: #1e293b;
     overflow-x: clip;

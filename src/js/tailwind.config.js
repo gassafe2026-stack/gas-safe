@@ -15,7 +15,7 @@ tailwind.config = {
                 }
             },
             fontFamily: {
-                sans: ['"Noto Sans Georgian"', 'sans-serif']
+                sans: ['"Noto Sans Georgian"', '"Noto Sans"', 'sans-serif']
             }
         }
     }
