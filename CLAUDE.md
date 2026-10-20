@@ -20,6 +20,8 @@ build.js               src/ -> dist/ (generated, git-ignored)
 - `node build.js` — regenerates `dist/`: `index.html`, `en/index.html`, `ru/index.html`, `js/i18n/<lang>.js`, copies css/js, writes `sitemap.xml` and `robots.txt`. Run after every change in `src/`; `dist/` is what gets deployed.
 - Preview: `python3 -m http.server 8000 -d dist` → http://localhost:8000/ (language links are directory URLs like `en/`, so use a server rather than `file://`).
 
+- Deploy: push to `main` on GitHub (`gassafe2026-stack/gas-safe`). `.github/workflows/deploy.yml` runs `node build.js` and publishes `dist/` to GitHub Pages; check runs with `gh run list`. The repo uses a local credential helper (`gh auth git-credential`), so pushes go through the active `gh` account, which must be `gassafe2026-stack`.
+
 Never edit `dist/` by hand. Dependencies load from CDNs, so previews need network access: Tailwind Play CDN (classes are compiled in the browser, so any Tailwind class in the template works without extra tooling), Font Awesome 6.4.0, Google Fonts (Noto Sans Georgian + Noto Sans for Latin/Cyrillic).
 
 ## Internationalization & SEO
