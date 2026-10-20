@@ -1,0 +1,235 @@
+const WHATSAPP_NUMBER = '995571504600';
+const DETECTOR_KIT_PRICE = 70;
+let pointsCount = 1;
+// Snapshot taken by "ამ ფასით შეკვეთა"; used while the booking form still has the same service selected
+let calcEstimate = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const byId = (id) => document.getElementById(id);
+
+    // Mobile menu: toggle button; any link inside closes the menu
+    byId('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+    byId('mobile-menu').querySelectorAll('a').forEach(link => link.addEventListener('click', toggleMobileMenu));
+
+    // Emergency modal: all [data-open-emergency] buttons, close button, backdrop click, Escape
+    document.querySelectorAll('[data-open-emergency]').forEach(btn => btn.addEventListener('click', openEmergencyModal));
+    byId('emergency-close').addEventListener('click', closeEmergencyModal);
+    byId('emergency-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeEmergencyModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeEmergencyModal();
+    });
+
+    // Calculator
+    byId('calc-service').addEventListener('change', calculatePrice);
+    byId('calc-detector-kit').addEventListener('change', calculatePrice);
+    document.querySelectorAll('[data-points-delta]').forEach(btn => {
+        btn.addEventListener('click', () => adjustPoints(Number(btn.dataset.pointsDelta)));
+    });
+    byId('calc-to-booking').addEventListener('click', transferCalcToBooking);
+
+    // Service cards → booking form
+    document.querySelectorAll('[data-book-service]').forEach(link => {
+        link.addEventListener('click', () => selectServiceForBooking(link.dataset.bookService));
+    });
+
+    // Forms
+    byId('book-service').addEventListener('change', updateCalcEstimateNote);
+    byId('direct-booking-form').addEventListener('submit', handleDirectBooking);
+    byId('emergency-form').addEventListener('submit', submitEmergency);
+
+    document.querySelectorAll('input[data-phone]').forEach(input => {
+        input.addEventListener('input', () => {
+            const valid = !input.value.trim() || normalizePhone(input.value);
+            input.setCustomValidity(valid ? '' : 'შეიყვანეთ სწორი ნომერი, მაგ: 5XX XX XX XX');
+        });
+    });
+
+    calculatePrice();
+});
+
+// Accepts "5XX XX XX XX", "+995 5XX...", "995-5XX..." etc. Returns "5XX XX XX XX" or null
+function normalizePhone(value) {
+    let digits = value.replace(/\D/g, '');
+    if (digits.length === 12 && digits.startsWith('995')) digits = digits.slice(3);
+    if (!/^[3-57]\d{8}$/.test(digits)) return null;
+    return digits.replace(/(\d{3})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+}
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('hidden');
+}
+
+function openEmergencyModal() {
+    document.getElementById('emergency-modal').classList.remove('hidden');
+    document.body.classList.add('modal-active');
+}
+
+function closeEmergencyModal() {
+    document.getElementById('emergency-modal').classList.add('hidden');
+    document.body.classList.remove('modal-active');
+}
+
+function adjustPoints(delta) {
+    pointsCount = Math.max(1, Math.min(10, pointsCount + delta));
+    document.getElementById('calc-points-count').innerText = pointsCount;
+    calculatePrice();
+}
+
+function calculatePrice() {
+    const selectEl = document.getElementById('calc-service');
+    const basePrice = parseInt(selectEl.options[selectEl.selectedIndex].dataset.price) || 80;
+    const hasDetectorKit = isDetectorKitSelected();
+
+    // Add-ons only apply to detector installation
+    document.getElementById('calc-addons').classList.toggle('hidden', selectEl.value !== 'detector');
+
+    // Detector kit is installed at every point
+    const total = (basePrice + (hasDetectorKit ? DETECTOR_KIT_PRICE : 0)) * pointsCount;
+
+    document.getElementById('calc-total-price').innerText = total;
+}
+
+function isDetectorKitSelected() {
+    return document.getElementById('calc-service').value === 'detector'
+        && document.getElementById('calc-detector-kit').checked;
+}
+
+// serviceKey matches data-service on #book-service options and option values in #calc-service
+function selectServiceForBooking(serviceKey) {
+    const bookServiceSelect = document.getElementById('book-service');
+    const index = [...bookServiceSelect.options].findIndex(o => o.dataset.service === serviceKey);
+    if (index !== -1) bookServiceSelect.selectedIndex = index;
+    updateCalcEstimateNote();
+}
+
+function transferCalcToBooking() {
+    const calcService = document.getElementById('calc-service');
+
+    calcEstimate = {
+        service: calcService.value,
+        serviceName: calcService.options[calcService.selectedIndex].text,
+        points: pointsCount,
+        hasDetectorKit: isDetectorKitSelected(),
+        total: document.getElementById('calc-total-price').innerText
+    };
+
+    selectServiceForBooking(calcService.value);
+}
+
+// The estimate stays attached only while the booking form has the calculator's service selected
+function activeCalcEstimate() {
+    const selected = document.getElementById('book-service').selectedOptions[0];
+    return calcEstimate && calcEstimate.service === selected.dataset.service ? calcEstimate : null;
+}
+
+function updateCalcEstimateNote() {
+    const note = document.getElementById('calc-estimate-note');
+    const estimate = activeCalcEstimate();
+    note.classList.toggle('hidden', !estimate);
+    if (estimate) note.textContent = `კალკულატორით: ${estimate.total} ₾-დან (${calcEstimateDetails(estimate)})`;
+}
+
+function calcEstimateDetails(estimate) {
+    let details = `${estimate.points} წერტილი`;
+    if (estimate.hasDetectorKit) details += ', + დეტექტორი და ელ. ონკანი';
+    return details;
+}
+
+// api.whatsapp.com instead of wa.me: the wa.me redirect breaks emoji in the text
+function openWhatsApp(lines) {
+    const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(lines.join('\n'))}`;
+    // New tab on desktop; if the popup is blocked, open in the same tab
+    const win = window.open(url, '_blank');
+    if (!win) window.location.href = url;
+}
+
+function handleDirectBooking(e) {
+    e.preventDefault();
+    const field = (id) => document.getElementById(id).value.trim();
+    const name = field('book-name');
+    const notes = field('book-notes');
+    const serviceOption = document.getElementById('book-service').selectedOptions[0];
+    const estimate = activeCalcEstimate();
+
+    const lines = [
+        '🔥 ახალი შეკვეთა — GAS-SAFE',
+        '',
+        `👤 სახელი: ${name}`,
+        `📞 ტელეფონი: ${normalizePhone(field('book-phone'))}`
+    ];
+    if (estimate) {
+        lines.push(
+            `🛠 სერვისი: ${estimate.serviceName}`,
+            `🔢 დეტალები: ${calcEstimateDetails(estimate)}`,
+            `💰 სავარაუდო ფასი: ${estimate.total} ₾-დან`
+        );
+    } else {
+        lines.push(
+            `🛠 სერვისი: ${serviceOption.value}`,
+            `💰 ფასი: ${serviceOption.dataset.price} ₾-დან`
+        );
+    }
+    lines.push(
+        `🏙 ქალაქი: ${field('book-city')}`,
+        `📍 მისამართი: ${field('book-address')}`
+    );
+    if (notes) lines.push(`📝 შენიშვნა: ${notes}`);
+
+    openWhatsApp(lines);
+
+    // Form is intentionally not reset: if WhatsApp fails to open, the customer can retry without retyping
+    showToast(`მადლობა ${name}! გაგზავნეთ შეტყობინება WhatsApp-ში შეკვეთის დასასრულებლად.`, 'success');
+}
+
+function submitEmergency(e) {
+    e.preventDefault();
+    const phone = normalizePhone(document.getElementById('emergency-phone').value);
+    const address = document.getElementById('emergency-address').value.trim();
+
+    openWhatsApp([
+        '🚨 სასწრაფო გამოძახება — GAS-SAFE',
+        '',
+        `📞 ტელეფონი: ${phone}`,
+        `📍 მისამართი: ${address}`
+    ]);
+
+    closeEmergencyModal();
+    // Fields are kept so a repeated attempt doesn't require retyping
+    showToast('გაგზავნეთ შეტყობინება WhatsApp-ში! თუ სიტუაცია სასწრაფოა, დარეკეთ: 571 50 46 00', 'emergency');
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+
+    let bgClass = 'bg-slate-900 border-slate-700 text-white';
+    if (type === 'success') bgClass = 'bg-emerald-800 border-emerald-600 text-white';
+    if (type === 'emergency') bgClass = 'bg-red-700 border-red-500 text-white';
+
+    toast.className = `${bgClass} p-4 rounded-xl border shadow-xl text-xs font-medium pointer-events-auto transform transition duration-300 translate-y-2 opacity-0 flex items-center justify-between gap-3`;
+    // Message is set as text, not HTML: it contains user input (the customer's name)
+    const text = document.createElement('span');
+    text.textContent = message;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'text-white opacity-80 hover:opacity-100';
+    closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    closeBtn.addEventListener('click', () => toast.remove());
+
+    toast.append(text, closeBtn);
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+    }, 10);
+
+    setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
