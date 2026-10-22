@@ -151,7 +151,12 @@
         "emAddressPlaceholder": "მაგ: საბურთალო, პეკინის 15",
         "emRuleTitle": "უსაფრთხოების წესი:",
         "emRuleText": "დაკეტეთ გაზის მთავარი ონკანი და გააღეთ კარ-ფანჯარა!",
-        "emSubmit": "გამოიძახეთ ჯგუფი ახლავე"
+        "emSubmit": "გამოიძახეთ ჯგუფი ახლავე",
+
+        "consentText": "საიტის გასაუმჯობესებლად ვიყენებთ Google Analytics-ის cookie-ებს ანონიმური სტატისტიკისთვის. თანხმობის გარეშე cookie-ები არ შეინახება.",
+        "consentAccept": "თანხმობა",
+        "consentDecline": "უარი",
+        "consentSettings": "Cookie-ის პარამეტრები"
     },
     "js": {
         "phoneInvalid": "შეიყვანეთ სწორი ნომერი, მაგ: 5XX XX XX XX",

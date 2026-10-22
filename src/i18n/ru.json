@@ -151,7 +151,12 @@
         "emAddressPlaceholder": "Например: Сабуртало, ул. Пекина 15",
         "emRuleTitle": "Правило безопасности:",
         "emRuleText": "Перекройте главный газовый кран и откройте двери и окна!",
-        "emSubmit": "Вызвать бригаду сейчас"
+        "emSubmit": "Вызвать бригаду сейчас",
+
+        "consentText": "Мы используем cookie Google Analytics для анонимной статистики и улучшения сайта. Без вашего согласия cookie не сохраняются.",
+        "consentAccept": "Согласен",
+        "consentDecline": "Отказаться",
+        "consentSettings": "Настройки cookie"
     },
     "js": {
         "phoneInvalid": "Введите корректный номер, например: 5XX XX XX XX",

@@ -151,7 +151,12 @@
         "emAddressPlaceholder": "e.g. Saburtalo, 15 Pekini Ave",
         "emRuleTitle": "Safety rule:",
         "emRuleText": "Close the main gas valve and open the doors and windows!",
-        "emSubmit": "Call the Crew Now"
+        "emSubmit": "Call the Crew Now",
+
+        "consentText": "We use Google Analytics cookies to collect anonymous statistics and improve the site. No cookies are stored without your consent.",
+        "consentAccept": "Accept",
+        "consentDecline": "Decline",
+        "consentSettings": "Cookie settings"
     },
     "js": {
         "phoneInvalid": "Enter a valid number, e.g. 5XX XX XX XX",

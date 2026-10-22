@@ -31,6 +31,12 @@ Never edit `dist/` by hand. Dependencies load from CDNs, so previews need networ
 - `main.js` gets its strings from `window.I18N` (generated `js/i18n/<lang>.js`) via `t(key, vars)`; `formatPrice()` and `formatPoints()` (uses `Intl.PluralRules`, so `points` in the locale has `one`/`few`/`many`/`other` forms) handle language-specific word order. WhatsApp messages are sent in the page's language.
 - Keep the Georgian copy as the source of truth; prices are in lari (`₾` in the UI, `GEL`/`лари` in titles).
 
+## Analytics
+
+- Google Analytics 4 is enabled by setting `GA_MEASUREMENT_ID` at the top of `build.js`; when empty, pages are built without `js/analytics.js`.
+- `src/js/analytics.js` uses Consent Mode v2: analytics storage stays `denied` (no cookies) until the visitor accepts `#consent-banner`; the choice is kept in `localStorage` (`gassafe-consent`) and can be changed via the footer `[data-open-consent]` link. Ad-related consent is always denied.
+- Events are sent from `main.js` through `track(name, params)` (a no-op without analytics): `generate_lead` (`lead_type`: `booking` | `emergency`, plus `service`, `value`, `currency`, `from_calculator` for bookings — fired when WhatsApp opens, not when the message is actually sent), `calculator_to_booking`, `open_emergency`, `click_call`, `click_whatsapp`, `click_viber` (with `placement` = nearest element id or `header`/`footer`).
+
 ## Structure
 
 Page sections in order: language top bar, sticky nav (+ `#mobile-menu`), `#hero`, emergency banner, `#services` (service cards), `#calculator`, `#booking` (form), `#guarantee`, footer, then the `#emergency-modal` overlay and `#toast-container`.

@@ -7,6 +7,8 @@ const fs = require('fs');
 const path = require('path');
 
 const SITE_URL = 'https://gassafe.ge';
+// Google Analytics 4 measurement ID ("G-XXXXXXXXXX"); leave empty to build the site without analytics
+const GA_MEASUREMENT_ID = 'G-7XRE0SNFYB';
 const SRC = path.join(__dirname, 'src');
 const DIST = path.join(__dirname, 'dist');
 
@@ -152,7 +154,10 @@ function render(template, lang, locale, prices) {
         ogLocale: lang.ogLocale,
         ogLocaleAlternates: ogLocaleAlternates(lang),
         langLinks: langLinks(lang),
-        jsonLd: jsonLd(lang, locale.page, prices)
+        jsonLd: jsonLd(lang, locale.page, prices),
+        analyticsScript: GA_MEASUREMENT_ID
+            ? `    <script src="${lang.dir ? '../' : ''}js/analytics.js" data-ga-id="${escapeHtml(GA_MEASUREMENT_ID)}"></script>`
+            : ''
     };
 
     return template

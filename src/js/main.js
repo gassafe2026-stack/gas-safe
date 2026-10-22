@@ -19,6 +19,17 @@ function formatPoints(n) {
     return (forms[form] || forms.other).replace('{n}', n);
 }
 
+// GA4 event; a no-op when the site is built without analytics (js/analytics.js defines window.gtag)
+function track(eventName, params = {}) {
+    if (window.gtag) window.gtag('event', eventName, params);
+}
+
+// Where on the page an element sits: nearest section/menu id, or "header"/"footer"
+function placementOf(element) {
+    const container = element.closest('[id], header, footer');
+    return container ? container.id || container.tagName.toLowerCase() : 'page';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const byId = (id) => document.getElementById(id);
 
@@ -27,7 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
     byId('mobile-menu').querySelectorAll('a').forEach(link => link.addEventListener('click', toggleMobileMenu));
 
     // Emergency modal: all [data-open-emergency] buttons, close button, backdrop click, Escape
-    document.querySelectorAll('[data-open-emergency]').forEach(btn => btn.addEventListener('click', openEmergencyModal));
+    document.querySelectorAll('[data-open-emergency]').forEach(btn => btn.addEventListener('click', () => {
+        track('open_emergency', { placement: placementOf(btn) });
+        openEmergencyModal();
+    }));
     byId('emergency-close').addEventListener('click', closeEmergencyModal);
     byId('emergency-modal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeEmergencyModal();
@@ -59,6 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const valid = !input.value.trim() || normalizePhone(input.value);
             input.setCustomValidity(valid ? '' : t('phoneInvalid'));
         });
+    });
+
+    // Contact clicks: phone, WhatsApp and Viber links anywhere on the page
+    const contactEvents = [
+        ['a[href^="tel:"]', 'click_call'],
+        ['a[href*="wa.me/"]', 'click_whatsapp'],
+        ['a[href^="viber:"]', 'click_viber']
+    ];
+    document.addEventListener('click', (e) => {
+        for (const [selector, eventName] of contactEvents) {
+            const link = e.target.closest(selector);
+            if (link) return track(eventName, { placement: placementOf(link) });
+        }
     });
 
     calculatePrice();
@@ -131,6 +158,7 @@ function transferCalcToBooking() {
         total: document.getElementById('calc-total-price').innerText
     };
 
+    track('calculator_to_booking', { service: calcEstimate.service, value: Number(calcEstimate.total), currency: 'GEL' });
     selectServiceForBooking(calcService.value);
 }
 
@@ -196,6 +224,14 @@ function handleDirectBooking(e) {
     if (notes) lines.push(`📝 ${t('waNotes')}: ${notes}`);
 
     openWhatsApp(lines);
+    // Counts as a lead when WhatsApp opens; whether the customer actually presses send is not visible to the site
+    track('generate_lead', {
+        lead_type: 'booking',
+        service: serviceOption.dataset.service,
+        from_calculator: Boolean(estimate),
+        value: Number(estimate ? estimate.total : serviceOption.dataset.price),
+        currency: 'GEL'
+    });
 
     // Form is intentionally not reset: if WhatsApp fails to open, the customer can retry without retyping
     showToast(t('toastBooked', { name }), 'success');
@@ -212,6 +248,7 @@ function submitEmergency(e) {
         `📞 ${t('waPhone')}: ${phone}`,
         `📍 ${t('waAddress')}: ${address}`
     ]);
+    track('generate_lead', { lead_type: 'emergency' });
 
     closeEmergencyModal();
     // Fields are kept so a repeated attempt doesn't require retyping
