@@ -29,6 +29,7 @@ Never edit `dist/` by hand. Dependencies load from CDNs, so previews need networ
 - In `src/template.html`, `{{key}}` is replaced with the HTML-escaped `page.key` of the current language; `{{{key}}}` is a value computed in `build.js` (asset base path, canonical URL, hreflang/og tags, language switcher links, JSON-LD). Unknown keys, and keys present in one locale but not the others, fail the build — add every new text to all three JSON files.
 - Each page gets its own `<html lang>`, title/description, canonical URL, `hreflang` alternates (+ `x-default` → Georgian), `og:locale` + alternates, and `HomeAndConstructionBusiness` JSON-LD whose service prices are read from the `data-price` attributes on `#book-service` options. `SITE_URL` and the language list live at the top of `build.js`.
 - `main.js` gets its strings from `window.I18N` (generated `js/i18n/<lang>.js`) via `t(key, vars)`; `formatPrice()` and `formatPoints()` (uses `Intl.PluralRules`, so `points` in the locale has `one`/`few`/`many`/`other` forms) handle language-specific word order. WhatsApp messages are sent in the page's language.
+- `page.districts` (Tbilisi districts/suburbs for `#book-city`) is an array translated item by item: `build.js` renders it as `{{{districtOptions}}}`, lists it in the JSON-LD `areaServed`, and fails if the lists differ in length — keep the same order in all three files.
 - Keep the Georgian copy as the source of truth; prices are in lari (`₾` in the UI, `GEL`/`лари` in titles).
 
 ## Analytics

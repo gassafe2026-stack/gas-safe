@@ -72,6 +72,13 @@ function loadLocales() {
             if (extra.length) fail(`${lang.code}.json "${section}" has keys not in ${base}.json: ${extra.join(', ')}`);
         }
     }
+
+    // District lists are translated item by item, so they must line up across languages
+    const districtCount = locales[base].page.districts.length;
+    for (const lang of LANGUAGES.slice(1)) {
+        const count = locales[lang.code].page.districts.length;
+        if (count !== districtCount) fail(`${lang.code}.json has ${count} districts, ${base}.json has ${districtCount}`);
+    }
     return locales;
 }
 
@@ -122,8 +129,10 @@ function jsonLd(lang, text, prices) {
         email: 'info@gassafe.ge',
         priceRange: `${Math.min(...Object.values(prices))}-${Math.max(...Object.values(prices))} GEL`,
         address: { '@type': 'PostalAddress', addressLocality: text.cityTbilisi, addressCountry: 'GE' },
-        areaServed: [text.cityTbilisi, text.cityRustavi, text.cityBatumi, text.cityKutaisi, text.cityMtskheta]
-            .map(name => ({ '@type': 'City', name })),
+        areaServed: [
+            { '@type': 'City', name: text.cityTbilisi },
+            ...text.districts.map(name => ({ '@type': 'Place', name: `${name}, ${text.cityTbilisi}` }))
+        ],
         openingHoursSpecification: {
             '@type': 'OpeningHoursSpecification',
             dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -155,6 +164,9 @@ function render(template, lang, locale, prices) {
         ogLocaleAlternates: ogLocaleAlternates(lang),
         langLinks: langLinks(lang),
         jsonLd: jsonLd(lang, locale.page, prices),
+        districtOptions: locale.page.districts
+            .map(name => `                                <option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+            .join('\n'),
         analyticsScript: GA_MEASUREMENT_ID
             ? `    <script src="${lang.dir ? '../' : ''}js/analytics.js" data-ga-id="${escapeHtml(GA_MEASUREMENT_ID)}"></script>`
             : ''
